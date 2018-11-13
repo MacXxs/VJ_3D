@@ -42,7 +42,7 @@ public class CarMovement : MonoBehaviour {
         }
         foreach(WheelCollider wheel in steerings)
         {
-            wheel.steerAngle = 45 * direction;
+            wheel.steerAngle = 90 * direction;
         }
         if (Input.GetKeyDown(KeyCode.H)) hornAudio.Play();
 	}
