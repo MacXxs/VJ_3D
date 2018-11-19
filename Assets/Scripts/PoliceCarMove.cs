@@ -4,10 +4,26 @@ using UnityEngine;
 
 public class PoliceCarMove : MonoBehaviour {
 
+
+    private float m_horizontal_in;
+    private float m_vertical_in;
+    private float m_steering_angle;
+    private bool break_force;
+
+    public WheelCollider frontRWheel, frontLWheel;
+    public WheelCollider rearRWheel, rearLWheel;
+    public Transform frontRWheelT, frontLWheelT;
+    public Transform rearRWheelT, rearLWheelT;
+    public float maxSteerAngle = 30;
+    public float motorForce = 50;
+    public float breakPower = 1000;
+
     private void GetInput()
     {
         m_horizontal_in = Input.GetAxis("Horizontal");
         m_vertical_in = Input.GetAxis("Vertical");
+        if (Input.GetKey(KeyCode.Space)) break_force = true;
+        else break_force = false;            
     }
 
     private void Steer()
@@ -19,8 +35,18 @@ public class PoliceCarMove : MonoBehaviour {
 
     private void Accelerate()
     {
-        frontRWheel.motorTorque = m_vertical_in * motorForce;
-        frontLWheel.motorTorque = m_vertical_in * motorForce;
+        if (break_force)
+        {
+            frontLWheel.brakeTorque = breakPower;
+            frontRWheel.brakeTorque = breakPower;
+        }
+        else
+        {
+            frontLWheel.brakeTorque = 0;
+            frontRWheel.brakeTorque = 0;
+            frontRWheel.motorTorque = m_vertical_in * motorForce;
+            frontLWheel.motorTorque = m_vertical_in * motorForce;
+        }
     }
 
     private void UpdateWheelMovement()
@@ -49,15 +75,4 @@ public class PoliceCarMove : MonoBehaviour {
         Accelerate();
         UpdateWheelMovement();
     }
-
-    private float m_horizontal_in;
-    private float m_vertical_in;
-    private float m_steering_angle;
-
-    public WheelCollider frontRWheel, frontLWheel;
-    public WheelCollider rearRWheel, rearLWheel;
-    public Transform frontRWheelT, frontLWheelT;
-    public Transform rearRWheelT, rearLWheelT;
-    public float maxSteerAngle = 30;
-    public float motorForce = 50;
 }
