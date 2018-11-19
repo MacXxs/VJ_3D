@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PauseManager : MonoBehaviour {
-    private bool paused;
+    public bool paused;
     public GameObject pauseMenu;
 	// Use this for initialization
 	void Start () {
@@ -16,19 +16,30 @@ public class PauseManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             //parem el temps
-            if (!paused) Time.timeScale = 0;
-            else Time.timeScale = 1;
-            paused = !paused;
-
-            //obrim menu de pausa
-            pauseMenu.gameObject.SetActive(true);
+            if (pauseMenu.activeSelf)
+            {
+                Unpause(pauseMenu);
+            }
+            else
+            {
+                Pause(pauseMenu);
+            }
         }
 		
 	}
 
-    public void unpause()
+    public void Unpause(GameObject pauseMenu)
     {
         Time.timeScale = 1;
+        pauseMenu.gameObject.SetActive(false);
+        paused = false;
+    }
+
+    public void Pause(bool pause)
+    {
+        Time.timeScale = 0;
+        pauseMenu.gameObject.SetActive(true);
+        paused = true;
     }
 
     public void exitGame()
