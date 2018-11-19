@@ -20,7 +20,7 @@ public class CarMovement : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-        //gameObject.GetComponent<Rigidbody>().centerOfMass.Set(0, -massCenter, 0);
+        gameObject.GetComponent<Rigidbody>().centerOfMass = centerOfMass.position;
         hornAudio = GetComponent<AudioSource>();
         car = GetComponent<Rigidbody>();
 	}
@@ -42,7 +42,7 @@ public class CarMovement : MonoBehaviour {
         }
         foreach(WheelCollider wheel in steerings)
         {
-            wheel.steerAngle = 45 * direction;
+            wheel.steerAngle = 20 * direction;
         }
         if (Input.GetKeyDown(KeyCode.H)) hornAudio.Play();
 	}
