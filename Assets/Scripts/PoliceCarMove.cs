@@ -16,7 +16,8 @@ public class PoliceCarMove : MonoBehaviour {
     public Transform rearRWheelT, rearLWheelT;
     public float maxSteerAngle = 30;
     public float motorForce = 50;
-    public float breakPower = 1000;
+    public float maxVelocity = 400;
+    public float breakPower = 3000;
 
     private void GetInput()
     {
@@ -37,16 +38,29 @@ public class PoliceCarMove : MonoBehaviour {
     {
         if (break_force)
         {
-            frontLWheel.brakeTorque = breakPower;
-            frontRWheel.brakeTorque = breakPower;
+            rearLWheel.brakeTorque = breakPower;
+            rearRWheel.brakeTorque = breakPower;
         }
         else
         {
-            frontLWheel.brakeTorque = 0;
-            frontRWheel.brakeTorque = 0;
+            rearLWheel.brakeTorque = 0;
+            rearRWheel.brakeTorque = 0;
+        }
+        if (m_vertical_in * motorForce < maxVelocity)
+        {
             frontRWheel.motorTorque = m_vertical_in * motorForce;
             frontLWheel.motorTorque = m_vertical_in * motorForce;
+            rearRWheel.motorTorque = m_vertical_in * motorForce;
+            rearLWheel.motorTorque = m_vertical_in * motorForce;
         }
+        else
+        {
+            frontRWheel.motorTorque = 0;
+            frontLWheel.motorTorque = 0;
+            rearRWheel.motorTorque = 0;
+            rearLWheel.motorTorque = 0;
+        }
+        
     }
 
     private void UpdateWheelMovement()
