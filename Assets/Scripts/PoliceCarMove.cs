@@ -8,16 +8,19 @@ public class PoliceCarMove : MonoBehaviour {
     private float m_horizontal_in;
     private float m_vertical_in;
     private float m_steering_angle;
+    private float maxMotorForce;
     private bool break_force;
+    private bool smoked = false; //treu fum
 
     public WheelCollider frontRWheel, frontLWheel;
     public WheelCollider rearRWheel, rearLWheel;
     public Transform frontRWheelT, frontLWheelT;
     public Transform rearRWheelT, rearLWheelT;
     public float maxSteerAngle = 30;
-    public float motorForce = 50;
+    public float motorForce;
     public float maxVelocity = 400;
     public float breakPower = 3000;
+    public float life = 100;
 
     public AudioSource[] sounds;
     public AudioSource hit_sound_1;
@@ -25,6 +28,7 @@ public class PoliceCarMove : MonoBehaviour {
     public AudioSource hit_sound_3;
 
     public GameObject spark;
+    public GameObject smoke;
 
     private void GetInput()
     {
@@ -39,6 +43,24 @@ public class PoliceCarMove : MonoBehaviour {
         m_steering_angle = maxSteerAngle * m_horizontal_in;
         frontRWheel.steerAngle = m_steering_angle;
         frontLWheel.steerAngle = m_steering_angle;
+    }
+
+    private void Status()
+    {
+        if (life <= 0) motorForce = 0;
+        else if (life > 0 && life <= 25) motorForce = maxMotorForce * 1 / 4;
+        else if (life > 25 && life <= 50)
+        {
+            motorForce = maxMotorForce * 2 / 4;
+            if (!smoked)
+            {
+                Quaternion rot = new Quaternion();
+                rot.SetLookRotation(Vector3.up, Vector3.up);
+                Instantiate(smoke, transform.position,rot,transform);
+                smoked = true;
+            }
+        }
+        else if (life > 50 && life <= 75) motorForce = maxMotorForce * 3 / 4;
     }
 
     private void Accelerate()
@@ -109,11 +131,13 @@ public class PoliceCarMove : MonoBehaviour {
             if (collision.relativeVelocity.magnitude > 2 && collision.relativeVelocity.magnitude < 5) hit_sound_2.Play();
             else if (collision.relativeVelocity.magnitude > 5 && collision.relativeVelocity.magnitude < 8) hit_sound_1.Play();
             else if (collision.relativeVelocity.magnitude > 8) hit_sound_3.Play();
+            life -= collision.relativeVelocity.magnitude; //Reduïm la vida del cotxe
         }
     }
 
     private void Start()
     {
+        maxMotorForce = motorForce;
         sounds = GetComponents<AudioSource>();
         hit_sound_1 = sounds[0];
         hit_sound_2 = sounds[1];
@@ -124,6 +148,7 @@ public class PoliceCarMove : MonoBehaviour {
     {
         GetInput();
         Steer();
+        Status();
         Accelerate();
         UpdateWheelMovement();
     }
