@@ -24,6 +24,8 @@ public class PoliceCarMove : MonoBehaviour {
     public AudioSource hit_sound_2;
     public AudioSource hit_sound_3;
 
+    public GameObject spark;
+
     private void GetInput()
     {
         m_horizontal_in = Input.GetAxis("Horizontal");
@@ -88,10 +90,26 @@ public class PoliceCarMove : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision)
-    {   
-        if (collision.relativeVelocity.magnitude < 2) hit_sound_2.Play();
-        else if (collision.relativeVelocity.magnitude > 2 && collision.relativeVelocity.magnitude < 10) hit_sound_2.Play();
-        else hit_sound_3.Play();
+    {
+        if (collision.transform != transform && collision.contacts.Length > 0)
+        {
+            if (collision.relativeVelocity.magnitude > 2)
+            {
+                for (int i = 0; i < collision.contacts.Length; ++i)
+                {
+                    //Agafo la posicio de l'objecte amb el que es xoca per definir la direccio cap a la 
+                    //qual les particules han de dirigir-se
+                    Vector3 relativePos = collision.gameObject.transform.position - transform.position;
+                    Quaternion rot = Quaternion.LookRotation(relativePos, Vector3.up);
+                    //Instancio espurnes cada cop que es xoca amb suficient força en la posició del xoc i 
+                    //en la direccio del objecte amb el qual es xoca
+                    Instantiate(spark, collision.contacts[i].point, rot); 
+                }
+            }
+            if (collision.relativeVelocity.magnitude > 2 && collision.relativeVelocity.magnitude < 5) hit_sound_2.Play();
+            else if (collision.relativeVelocity.magnitude > 5 && collision.relativeVelocity.magnitude < 8) hit_sound_1.Play();
+            else if (collision.relativeVelocity.magnitude > 8) hit_sound_3.Play();
+        }
     }
 
     private void Start()
