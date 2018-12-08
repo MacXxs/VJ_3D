@@ -19,6 +19,11 @@ public class PoliceCarMove : MonoBehaviour {
     public float maxVelocity = 400;
     public float breakPower = 3000;
 
+    public AudioSource[] sounds;
+    public AudioSource hit_sound_1;
+    public AudioSource hit_sound_2;
+    public AudioSource hit_sound_3;
+
     private void GetInput()
     {
         m_horizontal_in = Input.GetAxis("Horizontal");
@@ -80,6 +85,21 @@ public class PoliceCarMove : MonoBehaviour {
 
         transform.position = pos;
         transform.rotation = quat;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {   
+        if (collision.relativeVelocity.magnitude < 2) hit_sound_2.Play();
+        else if (collision.relativeVelocity.magnitude > 2 && collision.relativeVelocity.magnitude < 10) hit_sound_2.Play();
+        else hit_sound_3.Play();
+    }
+
+    private void Start()
+    {
+        sounds = GetComponents<AudioSource>();
+        hit_sound_1 = sounds[0];
+        hit_sound_2 = sounds[1];
+        hit_sound_3 = sounds[2];
     }
 
     private void FixedUpdate()
