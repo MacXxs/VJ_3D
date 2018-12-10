@@ -56,7 +56,7 @@ public class PoliceCarMove : MonoBehaviour {
             {
                 Quaternion rot = new Quaternion();
                 rot.SetLookRotation(Vector3.up, Vector3.up);
-                Instantiate(smoke, transform.position,rot,transform);
+                Instantiate(smoke, transform.position, rot,transform);
                 smoked = true;
             }
         }
