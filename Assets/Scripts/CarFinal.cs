@@ -95,9 +95,6 @@ public class CarFinal : MonoBehaviour
 
     private void Accelerate()
     {
-        if (m_vertical_in > 0) {
-            int debug = 2 + 2;
-        }//DEBUG
         if (break_force)
         {
             rearLWheel.brakeTorque = breakPower;
@@ -108,7 +105,7 @@ public class CarFinal : MonoBehaviour
             rearLWheel.brakeTorque = 0;
             rearRWheel.brakeTorque = 0;
         }
-        if (m_vertical_in * motorForce < maxVelocity)
+        if (car.velocity.magnitude < maxVelocity)
         {
             frontRWheel.motorTorque = m_vertical_in * motorForce;
             frontLWheel.motorTorque = m_vertical_in * motorForce;
