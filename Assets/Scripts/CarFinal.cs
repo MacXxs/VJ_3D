@@ -200,6 +200,7 @@ public class CarFinal : MonoBehaviour
     private void CopyFrameStatus()
     {
         if(frameNumber < path.Count) actual = path[frameNumber];
+        //else transform.parent.gameObject.SetActive(false);
         car.position = actual.position;
         car.rotation = actual.rotation;
         frontRWheelT.rotation = actual.wheels_rotation;
@@ -241,9 +242,9 @@ public class CarFinal : MonoBehaviour
     {
         if (other.transform == EndArea)
         {
+                transform.parent.gameObject.SetActive(false);
             if (!auto)
             {
-                transform.parent.gameObject.SetActive(false);
                 transform.parent.parent.gameObject.SendMessage("NextCar");
             }
         }

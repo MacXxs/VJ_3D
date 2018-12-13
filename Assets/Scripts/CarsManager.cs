@@ -17,7 +17,6 @@ public class CarsManager : MonoBehaviour {
         {
             for (int i = 0; i < actual; i++)
             {
-                //GameObject fill = transform.GetChild(i).gameObject;
                 transform.GetChild(i).gameObject.SetActive(true);
                 transform.GetChild(i).GetChild(0).gameObject.SendMessage("GoAuto");
             }
