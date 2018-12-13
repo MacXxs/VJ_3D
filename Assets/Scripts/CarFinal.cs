@@ -235,10 +235,13 @@ public class CarFinal : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.transform == EndArea && !end)
+        if (other.transform == EndArea)
         {
-            transform.parent.gameObject.SetActive(false);
-            transform.parent.parent.gameObject.SendMessage("NextCar");
+            if (!auto)
+            {
+                transform.parent.gameObject.SetActive(false);
+                transform.parent.parent.gameObject.SendMessage("NextCar");
+            }
         }
 
         if (other.tag == "bonus")
