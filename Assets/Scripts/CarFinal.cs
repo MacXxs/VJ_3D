@@ -7,6 +7,7 @@ public struct Movement //utilitzat per enmagatzemar el input del jugador
     public Vector3 position;
     public Quaternion rotation;
     public Quaternion wheels_rotation;
+    public bool smoking;
 }
 
 public class CarFinal : MonoBehaviour
@@ -26,6 +27,7 @@ public class CarFinal : MonoBehaviour
     private float tPlayerBegin;                      //instant al que el player comença a controlar el cotxe
     private float tAutoBeguin;                       //instant al que la IA comença a controlar el cotxe
     private float tNextAction;                       //instant en que ha de canviar el input
+    private GameObject smokeInstance;
 
     public WheelCollider frontRWheel, frontLWheel;
     public WheelCollider rearRWheel, rearLWheel;
@@ -86,11 +88,19 @@ public class CarFinal : MonoBehaviour
             {
                 Quaternion rot = new Quaternion();
                 rot.SetLookRotation(Vector3.up, Vector3.up);
-                Instantiate(smoke, transform.position, rot, transform);
+                smokeInstance = Instantiate(smoke, transform.position, rot, transform);
                 smoked = true;
             }
         }
         else if (life > 50 && life <= 75) motorForce = maxMotorForce * 3 / 4;
+    }
+
+    private void MakeSmoke()
+    {
+        Quaternion rot = new Quaternion();
+        rot.SetLookRotation(Vector3.up, Vector3.up);
+        Instantiate(smoke, transform.position, rot, transform);
+        smoked = true;
     }
 
     private void Accelerate()
@@ -172,16 +182,15 @@ public class CarFinal : MonoBehaviour
         if (auto)
         {
             if (path.Count > 0) CopyFrameStatus();
-
         }
         else
         {
             GetInput();
             Steer();
-            Status();
             Accelerate();
             UpdateWheelMovement();
             SaveFrameStatus();
+            Status(); //ho moc aqui perque aixi puc posar primer frame smoked a false sempre i aqui sobreescriure amb true si cal
         }
     }
 
@@ -192,6 +201,7 @@ public class CarFinal : MonoBehaviour
         car.rotation = actual.rotation;
         frontRWheelT.rotation = actual.wheels_rotation;
         frontLWheelT.rotation = actual.wheels_rotation;
+        if (actual.smoking && !smoked) MakeSmoke();
 
     }
 
@@ -200,6 +210,7 @@ public class CarFinal : MonoBehaviour
         actual.position = car.transform.position;
         actual.rotation = car.transform.rotation;
         actual.wheels_rotation = frontRWheelT.rotation;
+        actual.smoking = smoked;
         path.Enqueue(actual);
 
     }
@@ -208,20 +219,26 @@ public class CarFinal : MonoBehaviour
     {
         car.position = InitialPos.position;
         car.rotation = InitialPos.rotation;
-        car.velocity = Vector3.zero;
         car.angularVelocity = Vector3.zero;
         rearLWheel.brakeTorque = Mathf.Infinity;
         rearRWheel.brakeTorque = Mathf.Infinity;
     }
 
-    void OnTriggerStay(Collider other)
+    private void GoAuto()
+    {
+        smoked = false;
+        auto = true;
+        Destroy(smokeInstance);
+        life = 100;
+        goInitialPos();
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.transform == EndArea && !end)
         {
-
-            auto = true;
-            //car.isKinematic = true;
-            goInitialPos();
+            transform.parent.gameObject.SetActive(false);
+            transform.parent.parent.gameObject.SendMessage("NextCar");
         }
     }
 }
