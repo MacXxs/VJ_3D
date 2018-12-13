@@ -240,6 +240,12 @@ public class CarFinal : MonoBehaviour
             transform.parent.gameObject.SetActive(false);
             transform.parent.parent.gameObject.SendMessage("NextCar");
         }
+
+        if (other.tag == "bonus")
+        {
+            GameObject.Find("Temporitzador").SendMessage("IncrementaTemps", 30);
+            other.gameObject.SetActive(false);
+        }
     }
 }
 
