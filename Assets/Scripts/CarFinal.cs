@@ -28,6 +28,7 @@ public class CarFinal : MonoBehaviour
     private int frameNumber;
     private GameObject smokeInstance;
     private Transform fletxa;
+    private GameObject camara;
 
     public WheelCollider frontRWheel, frontLWheel;
     public WheelCollider rearRWheel, rearLWheel;
@@ -49,7 +50,9 @@ public class CarFinal : MonoBehaviour
     public GameObject spark;
     public GameObject smoke;
 
-    public  GameObject prefabFletxa;
+    public GameObject prefabFletxa;
+    public GameObject prefabCamera;
+
 
 
     private void Start()
@@ -65,6 +68,7 @@ public class CarFinal : MonoBehaviour
         hit_sound_2 = sounds[1];
         hit_sound_3 = sounds[2];
         fletxa = Instantiate(prefabFletxa,transform,false).transform; //aqui esta al centre del cotxe
+        camara = Instantiate(prefabCamera, transform, false);
         //fletxa.transform.GetChild(0).transform.position += Vector3.forward*5; 
     }
 
@@ -263,6 +267,7 @@ public class CarFinal : MonoBehaviour
     {
         if (other.transform == EndArea)
         {
+            Destroy(camara);
             transform.parent.gameObject.SetActive(false);
             gameObject.tag = "Untagged";
             if (!auto)
