@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public struct Movement //utilitzat per enmagatzemar el input del jugador
 {
@@ -26,6 +27,7 @@ public class CarFinal : MonoBehaviour
     private List<Movement> path = new List<Movement>();                       //trajecte que ha realitzat el jugador quan controlava aquest cotxe
     private int frameNumber;
     private GameObject smokeInstance;
+    private Transform fletxa;
 
     public WheelCollider frontRWheel, frontLWheel;
     public WheelCollider rearRWheel, rearLWheel;
@@ -47,6 +49,8 @@ public class CarFinal : MonoBehaviour
     public GameObject spark;
     public GameObject smoke;
 
+    public  GameObject prefabFletxa;
+
 
     private void Start()
     {
@@ -60,6 +64,8 @@ public class CarFinal : MonoBehaviour
         hit_sound_1 = sounds[0];
         hit_sound_2 = sounds[1];
         hit_sound_3 = sounds[2];
+        fletxa = Instantiate(prefabFletxa,transform,false).transform; //aqui esta al centre del cotxe
+        //fletxa.transform.GetChild(0).transform.position += Vector3.forward*5; 
     }
 
     private void GetInput()
@@ -202,8 +208,14 @@ public class CarFinal : MonoBehaviour
             UpdateWheelMovement();
             SaveFrameStatus();
             Status(); //ho moc aqui perque aixi puc posar primer frame smoked a false sempre i aqui sobreescriure amb true si cal
+            updateArrow();
         }
         frameNumber++;
+    }
+
+    private void updateArrow()
+    {
+        fletxa.LookAt(EndArea.position, Vector3.up);
     }
 
     private void CopyFrameStatus()
