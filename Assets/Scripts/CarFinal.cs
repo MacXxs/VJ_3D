@@ -23,7 +23,8 @@ public class CarFinal : MonoBehaviour
     private bool auto;                                  //true <--> el cotxe te un path i va sol
     private bool end;                                   //true <--> ha anat auto i ha acabat la ruta
     private Movement actual;
-    private Queue<Movement> path = new Queue<Movement>();                       //trajecte que ha realitzat el jugador quan controlava aquest cotxe
+    private List<Movement> path = new List<Movement>();                       //trajecte que ha realitzat el jugador quan controlava aquest cotxe
+    private int frameNumber;
     private float tPlayerBegin;                      //instant al que el player comença a controlar el cotxe
     private float tAutoBeguin;                       //instant al que la IA comença a controlar el cotxe
     private float tNextAction;                       //instant en que ha de canviar el input
@@ -51,6 +52,7 @@ public class CarFinal : MonoBehaviour
 
     private void Start()
     {
+        frameNumber = 0;
         car = GetComponent<Rigidbody>();
         auto = end = false;
         goInitialPos();
@@ -192,11 +194,13 @@ public class CarFinal : MonoBehaviour
             SaveFrameStatus();
             Status(); //ho moc aqui perque aixi puc posar primer frame smoked a false sempre i aqui sobreescriure amb true si cal
         }
+        frameNumber++;
     }
 
     private void CopyFrameStatus()
     {
-        actual = path.Dequeue();
+        if(frameNumber < path.Count) actual = path[frameNumber];
+        //else transform.parent.gameObject.SetActive(false);
         car.position = actual.position;
         car.rotation = actual.rotation;
         frontRWheelT.rotation = actual.wheels_rotation;
@@ -211,7 +215,7 @@ public class CarFinal : MonoBehaviour
         actual.rotation = car.transform.rotation;
         actual.wheels_rotation = frontRWheelT.rotation;
         actual.smoking = smoked;
-        path.Enqueue(actual);
+        path.Add(actual);
 
     }
 
@@ -226,6 +230,7 @@ public class CarFinal : MonoBehaviour
 
     private void GoAuto()
     {
+        frameNumber = 0;
         smoked = false;
         auto = true;
         Destroy(smokeInstance);
@@ -237,9 +242,9 @@ public class CarFinal : MonoBehaviour
     {
         if (other.transform == EndArea)
         {
+                transform.parent.gameObject.SetActive(false);
             if (!auto)
             {
-                transform.parent.gameObject.SetActive(false);
                 transform.parent.parent.gameObject.SendMessage("NextCar");
             }
         }
