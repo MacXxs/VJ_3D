@@ -15,7 +15,6 @@ public class PauseManager : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //parem el temps
             if (pauseMenu.activeSelf)
             {
                 Unpause(pauseMenu);
