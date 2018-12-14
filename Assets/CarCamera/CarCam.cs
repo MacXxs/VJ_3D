@@ -7,10 +7,10 @@ public class CarCam : MonoBehaviour
     Transform car;
     
     [Tooltip("Offset de distància de seguiment de la càmara al cotxe, quant menor sigui el valor, més enrere es quedarà")]
-    public float howClose = 10.0f;
+    public float howClose = 5.0f;
 
     [Tooltip("Offset de distància entre la càmara i el cotxe, quant menor sigui el valor, més aprop del cotxe estarà la càmara")]
-    public float yDistance = 10.0f;
+    public float yDistance = 4.0f;
     
 
     void Awake()

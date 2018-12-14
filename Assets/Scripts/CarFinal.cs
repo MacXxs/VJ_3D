@@ -32,11 +32,12 @@ public class CarFinal : MonoBehaviour
     public Transform frontRWheelT, frontLWheelT;
     public Transform rearRWheelT, rearLWheelT;
     public Transform InitialPos, EndArea;
-    public float maxSteerAngle = 30;
-    public float motorForce;
-    public float maxVelocity = 400;
-    public float breakPower = 3000;
-    public float life = 100;
+    public float maxSteerAngle = 40;
+    public float motorForce = 200;
+    public float maxVelocity = 20;
+    public float breakPower = 900;
+    public float life = 200;
+    public float velocity;
 
     public AudioSource[] sounds;
     public AudioSource hit_sound_1;
@@ -197,6 +198,7 @@ public class CarFinal : MonoBehaviour
             GetInput();
             Steer();
             Accelerate();
+            velocity = car.velocity.magnitude;
             UpdateWheelMovement();
             SaveFrameStatus();
             Status(); //ho moc aqui perque aixi puc posar primer frame smoked a false sempre i aqui sobreescriure amb true si cal

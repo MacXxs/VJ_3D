@@ -11,16 +11,17 @@ public class PoliceCarMove : MonoBehaviour {
     private float maxMotorForce;
     private bool break_force;
     private bool smoked = false; //treu fum
+    private Rigidbody car_rigidBody;
 
     public WheelCollider frontRWheel, frontLWheel;
     public WheelCollider rearRWheel, rearLWheel;
     public Transform frontRWheelT, frontLWheelT;
     public Transform rearRWheelT, rearLWheelT;
-    public float maxSteerAngle = 30;
-    public float motorForce;
-    public float maxVelocity = 400;
-    public float breakPower = 3000;
-    public float life = 100;
+    public float maxSteerAngle = 40;
+    public float motorForce = 200;
+    public float maxVelocity = 1000;
+    public float breakPower = 900;
+    public float life = 200;
 
     public AudioSource[] sounds;
     public AudioSource hit_sound_1;
@@ -75,7 +76,7 @@ public class PoliceCarMove : MonoBehaviour {
             rearLWheel.brakeTorque = 0;
             rearRWheel.brakeTorque = 0;
         }
-        if (m_vertical_in * motorForce < maxVelocity)
+        if (car_rigidBody.velocity.magnitude < maxVelocity)
         {
             frontRWheel.motorTorque = m_vertical_in * motorForce;
             frontLWheel.motorTorque = m_vertical_in * motorForce;
@@ -137,6 +138,7 @@ public class PoliceCarMove : MonoBehaviour {
 
     private void Start()
     {
+        car_rigidBody = GetComponent<Rigidbody>();
         maxMotorForce = motorForce;
         sounds = GetComponents<AudioSource>();
         hit_sound_1 = sounds[0];
