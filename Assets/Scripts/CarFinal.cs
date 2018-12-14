@@ -21,13 +21,10 @@ public class CarFinal : MonoBehaviour
     private bool break_force;
     private bool smoked = false; //treu fum
     private bool auto;                                  //true <--> el cotxe te un path i va sol
-    private bool end;                                   //true <--> ha anat auto i ha acabat la ruta
+    private bool end;                                   //true <--> player ha chocat amb cotxe anant en auto
     private Movement actual;
     private List<Movement> path = new List<Movement>();                       //trajecte que ha realitzat el jugador quan controlava aquest cotxe
     private int frameNumber;
-    private float tPlayerBegin;                      //instant al que el player comença a controlar el cotxe
-    private float tAutoBeguin;                       //instant al que la IA comença a controlar el cotxe
-    private float tNextAction;                       //instant en que ha de canviar el input
     private GameObject smokeInstance;
 
     public WheelCollider frontRWheel, frontLWheel;
@@ -52,6 +49,7 @@ public class CarFinal : MonoBehaviour
 
     private void Start()
     {
+        if (!auto) gameObject.tag = "Player";
         frameNumber = 0;
         car = GetComponent<Rigidbody>();
         auto = end = false;
@@ -61,13 +59,16 @@ public class CarFinal : MonoBehaviour
         hit_sound_1 = sounds[0];
         hit_sound_2 = sounds[1];
         hit_sound_3 = sounds[2];
-        tPlayerBegin = Time.time;
     }
 
     private void GetInput()
     {
         m_horizontal_in = Input.GetAxis("Horizontal");
         m_vertical_in = Input.GetAxis("Vertical");
+        if (m_vertical_in != 0)
+        {
+            int debug = 2;
+        }
         if (Input.GetKey(KeyCode.Space)) break_force = true;
         else break_force = false;
     }
@@ -157,7 +158,13 @@ public class CarFinal : MonoBehaviour
     {
         if (collision.transform != transform && collision.contacts.Length > 0)
         {
-            if (collision.relativeVelocity.magnitude > 2)
+            if (auto && collision.gameObject.tag == "Player")
+            {
+                end = true;
+                MakeSmoke();
+            }
+
+            else if (collision.relativeVelocity.magnitude > 2)
             {
                 for (int i = 0; i < collision.contacts.Length; ++i)
                 {
@@ -183,7 +190,7 @@ public class CarFinal : MonoBehaviour
     {
         if (auto)
         {
-            if (path.Count > 0) CopyFrameStatus();
+            if (frameNumber < path.Count && !end) CopyFrameStatus();
         }
         else
         {
@@ -199,7 +206,7 @@ public class CarFinal : MonoBehaviour
 
     private void CopyFrameStatus()
     {
-        if(frameNumber < path.Count) actual = path[frameNumber];
+        actual = path[frameNumber];
         //else transform.parent.gameObject.SetActive(false);
         car.position = actual.position;
         car.rotation = actual.rotation;
@@ -242,14 +249,20 @@ public class CarFinal : MonoBehaviour
     {
         if (other.transform == EndArea)
         {
-                transform.parent.gameObject.SetActive(false);
+            transform.parent.gameObject.SetActive(false);
+            gameObject.tag = "Untagged";
             if (!auto)
             {
                 transform.parent.parent.gameObject.SendMessage("NextCar");
             }
         }
 
-        if (other.tag == "bonus")
+        //else if (other.tag == "Player")
+        //{
+        //    end = true;
+        //}
+
+        else if (other.tag == "bonus")
         {
             GameObject.Find("Temporitzador").SendMessage("IncrementaTemps", 30);
             other.gameObject.SetActive(false);
